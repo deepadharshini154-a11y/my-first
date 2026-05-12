@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ page.title }} - Movie Rating App</title>
+    <style>
+      body {margin: 0; font-family: Inter, Arial, sans-serif; background: #0b1220; color: #e2e8f0;}
+      .layout {display: flex; min-height: 100vh;}
+      .sidebar {width: 240px; background: #0d1326; padding: 2rem 1.25rem; box-sizing: border-box; position: sticky; top: 0; height: 100vh;}
+      .sidebar h2 {margin: 0 0 1.5rem; font-size: 1.25rem; letter-spacing: 0.04em;}
+      .sidebar nav a {display: block; color: #94a3b8; text-decoration: none; margin: 0.75rem 0; padding: 0.7rem 1rem; border-radius: 12px;}
+      .sidebar nav a.active, .sidebar nav a:hover {background: #111b33; color: #f8fafc;}
+      .sidebar .bottom {margin-top: 2rem; font-size: 0.9rem; color: #64748b;}
+      .sidebar-toggle {display: none; width: 100%; margin-bottom: 1rem; padding: 0.85rem 1rem; border: none; background: #111b33; color: #f8fafc; border-radius: 12px; font-size: 1rem; text-align: left; cursor: pointer;}
+      .sidebar nav {transition: max-height 0.25s ease-in-out;}
+      .sidebar.open nav {max-height: 1000px;}
+      .sidebar nav.closed {max-height: 0; overflow: hidden;}
+      .content {flex: 1; padding: 2rem;}
+      .topbar {display:flex; justify-content:space-between; align-items:center; margin-bottom:1.75rem;}
+      .title {font-size:1.75rem; font-weight:700;}
+      .meta {color:#94a3b8;}
+      .panel {background:#111b33; border-radius:24px; padding:1.5rem; margin-bottom:1.5rem;}
+      .panel-header {display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;}
+      .panel-header h3 {margin:0; font-size:1.05rem;}
+      .panel-header span {font-size:0.9rem; color:#94a3b8;}
+      .grid {display:grid; gap:1rem; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); margin-bottom:1.5rem;}
+      .card {background:#0d1326; border-radius:20px; padding:1.25rem;}
+      .card strong {display:block; font-size:1.85rem; margin-bottom:0.5rem;}
+      .card p {color:#94a3b8; margin:0;}
+      .table {width:100%; border-collapse: collapse;}
+      .table th, .table td {padding:1rem; border-bottom:1px solid #1f2937; text-align:left;}
+      .table th {color:#cbd5e1;}
+      .badge {background:#2563eb; color:#fff; border-radius:999px; padding:0.35rem 0.8rem; font-size:0.8rem;}
+
+      @media (max-width: 1024px) {
+        .layout {flex-direction: column;}
+        .sidebar {width: 100%; position: relative; height: auto; padding: 1.5rem 1rem;}
+        .content {padding: 1.25rem;}
+        .topbar {flex-direction: column; align-items: flex-start; gap: 0.75rem;}
+        .panel-header {flex-direction: column; align-items: flex-start; gap: 0.5rem;}
+        .grid {grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));}
+        .sidebar nav a {padding: 0.8rem; font-size: 0.95rem;}
+      }
+      @media (max-width: 640px) {
+        .content {padding: 1rem;}
+        .sidebar {padding: 1.25rem;}
+        .topbar .title {font-size: 1.35rem;}
+        .panel {padding: 1rem;}
+        .panel-header h3 {font-size: 1rem;}
+        .card {padding: 1rem;}
+        .table th, .table td {padding: 0.9rem;}
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <button class="sidebar-toggle" aria-label="Toggle navigation">☰ Menu</button>
+        <h2>MovieLens</h2>
+        <nav>
+          <a href="/dashboard" class="{% if page.key == 'dashboard' %}active{% endif %}">Overview</a>
+          <a href="/movielens" class="{% if page.key == 'movielens' %}active{% endif %}">MovieLens</a>
+          <a href="/ratings" class="{% if page.key == 'ratings' %}active{% endif %}">Ratings</a>
+          <a href="/genres" class="{% if page.key == 'genres' %}active{% endif %}">Genres</a>
+          <a href="/directors" class="{% if page.key == 'directors' %}active{% endif %}">Directors</a>
+          <a href="/actors" class="{% if page.key == 'actors' %}active{% endif %}">Actors</a>
+          <a href="/users" class="{% if page.key == 'users' %}active{% endif %}">Users</a>
+          <a href="/lists" class="{% if page.key == 'lists' %}active{% endif %}">Lists</a>
+          <a href="/recommendations" class="{% if page.key == 'recommendations' %}active{% endif %}">Recommendations</a>
+          <a href="/logout">Logout</a>
+        </nav>
+        <div class="bottom">Logged in as deepa@gmail.com</div>
+      </aside>
+      <main class="content">
+        <div class="topbar">
+          <div>
+            <div class="title">{{ page.title }}</div>
+            <div class="meta">{{ page.subtitle }}</div>
+          </div>
+          <div class="meta">Protected page</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h3>{{ page.title }} Summary</h3>
+            <span>{{ page.description }}</span>
+          </div>
+          <div class="grid">
+            {% for card in page.cards %}
+            <div class="card"><strong>{{ card.value }}</strong><p>{{ card.label }}</p></div>
+            {% endfor %}
+          </div>
+        </div>
+
+        {% if page.rows %}
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Details</h3>
+          </div>
+          <table class="table">
+            <thead>
+              <tr><th>Name</th><th>Detail</th><th>Value</th></tr>
+            </thead>
+            <tbody>
+              {% for row in page.rows %}
+              <tr><td>{{ row.name }}</td><td>{{ row.detail }}</td><td><span class="badge">{{ row.value }}</span></td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+      </main>
+    </div>
+    <script>
+      const sectionToggle = document.querySelector('.sidebar-toggle');
+      if (sectionToggle) {
+        sectionToggle.addEventListener('click', () => {
+          document.querySelector('.sidebar').classList.toggle('open');
+        });
+      }
+    </script>
+  </body>
+</html>

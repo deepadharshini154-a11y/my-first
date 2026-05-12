@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MovieLens - Movie Rating App</title>
+    <style>
+      body {margin: 0; font-family: Inter, Arial, sans-serif; background: #0b1220; color: #e2e8f0;}
+      .layout {display: flex; min-height: 100vh;}
+      .sidebar {width: 240px; background: #0d1326; padding: 2rem 1.25rem; box-sizing: border-box; position: sticky; top: 0; height: 100vh;}
+      .sidebar h2 {margin: 0 0 1.5rem; font-size: 1.25rem; letter-spacing: 0.04em;}
+      .sidebar nav a {display: block; color: #94a3b8; text-decoration: none; margin: 0.75rem 0; padding: 0.7rem 1rem; border-radius: 12px;}
+      .sidebar nav a.active, .sidebar nav a:hover {background: #111b33; color: #f8fafc;}
+      .sidebar .bottom {margin-top: 2rem; font-size: 0.9rem; color: #64748b;}
+      .sidebar-toggle {display: none; width: 100%; margin-bottom: 1rem; padding: 0.85rem 1rem; border: none; background: #111b33; color: #f8fafc; border-radius: 12px; font-size: 1rem; text-align: left; cursor: pointer;}
+      .sidebar nav {transition: max-height 0.25s ease-in-out;}
+      .sidebar.open nav {max-height: 1000px;}
+      .sidebar nav.closed {max-height: 0; overflow: hidden;}
+      .content {flex: 1; padding: 2rem;}
+      .topbar {display:flex; justify-content:space-between; align-items:center; margin-bottom:1.75rem;}
+      .topbar .title {font-size:1.75rem; font-weight:700;}
+      .topbar .meta {color:#94a3b8;}
+      .panel {background:#111b33; border-radius:24px; padding:1.5rem; margin-bottom:1.5rem;}
+      .panel-header {display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;}
+      .panel-header h3 {margin:0; font-size:1.05rem;}
+      .panel-header span {font-size:0.9rem; color:#94a3b8;}
+      .grid {display:grid; gap:1rem; grid-template-columns:repeat(auto-fit, minmax(220px,1fr));}
+      .card {background:#0d1326; border-radius:20px; padding:1.25rem;}
+      .card strong {display:block; font-size:1.85rem; margin-bottom:0.5rem;}
+      .card p {color:#94a3b8; margin:0;}
+      .table {width:100%; border-collapse: collapse;}
+      .table th, .table td {padding:1rem; border-bottom:1px solid #1f2937; text-align:left;}
+      .table th {color:#cbd5e1;}
+      .pill {display:inline-flex; align-items:center; gap:0.35rem; padding:0.45rem 0.75rem; border-radius:999px; background:#111b33; color:#94a3b8; font-size:0.85rem;}
+      .badge {background:#2563eb; color:#fff; border-radius:999px; padding:0.35rem 0.8rem; font-size:0.8rem;}
+
+      @media (max-width: 1024px) {
+        .layout {flex-direction: column;}
+        .sidebar {width: 100%; position: relative; height: auto; padding: 1.5rem 1rem;}
+        .content {padding: 1.25rem;}
+        .topbar {flex-direction: column; align-items: flex-start; gap: 0.75rem;}
+        .panel-header {flex-direction: column; align-items: flex-start; gap: 0.5rem;}
+        .grid {grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));}
+        .sidebar nav a {padding: 0.8rem; font-size: 0.95rem;}
+      }
+      @media (max-width: 640px) {
+        .content {padding: 1rem;}
+        .sidebar {padding: 1.25rem;}
+        .topbar .title {font-size: 1.35rem;}
+        .panel {padding: 1rem;}
+        .panel-header h3 {font-size: 1rem;}
+        .card {padding: 1rem;}
+        .table th, .table td {padding: 0.9rem;}
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <button class="sidebar-toggle" aria-label="Toggle navigation">☰ Menu</button>
+        <h2>MovieLens</h2>
+        <nav>
+          <a href="/dashboard">Overview</a>
+          <a href="/movielens" class="active">MovieLens</a>
+          <a href="/ratings">Ratings</a>
+          <a href="/genres">Genres</a>
+          <a href="/directors">Directors</a>
+          <a href="/actors">Actors</a>
+          <a href="/users">Users</a>
+          <a href="/lists">Lists</a>
+          <a href="/recommendations">Recommendations</a>
+          <a href="/logout">Logout</a>
+        </nav>
+        <div class="bottom">Logged in as deepa@gmail.com</div>
+      </aside>
+      <main class="content">
+        <div class="topbar">
+          <div>
+            <div class="title">MovieLens Section</div>
+            <div class="meta">Dashboard page for the MovieLens dataset</div>
+          </div>
+          <div class="meta">Only available after login</div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <strong>100,847</strong>
+            <p>Total Movies analyzed</p>
+          </div>
+          <div class="card">
+            <strong>20.36M</strong>
+            <p>Total Ratings</p>
+          </div>
+          <div class="card">
+            <strong>6.89</strong>
+            <p>Average Score</p>
+          </div>
+          <div class="card">
+            <strong>7.20</strong>
+            <p>Median Rating</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Top Rated Movies</h3>
+            <span>Based on MovieLens sample data</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr><th>Movie</th><th>Genre</th><th>Rating</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>The Shawshank Redemption</td><td>Drama</td><td><span class="badge">9.3</span></td></tr>
+              <tr><td>The Godfather</td><td>Crime, Drama</td><td><span class="badge">9.2</span></td></tr>
+              <tr><td>The Dark Knight</td><td>Action, Crime, Drama</td><td><span class="badge">9.0</span></td></tr>
+              <tr><td>The Godfather Part II</td><td>Crime, Drama</td><td><span class="badge">8.9</span></td></tr>
+              <tr><td>12 Angry Men</td><td>Drama</td><td><span class="badge">8.9</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Dataset Highlights</h3>
+            <span>MovieLens summary</span>
+          </div>
+          <div class="grid">
+            <div class="card"><strong>38.7%</strong><p>Drama share</p></div>
+            <div class="card"><strong>22.1%</strong><p>Comedy share</p></div>
+            <div class="card"><strong>16.8%</strong><p>Action share</p></div>
+            <div class="card"><strong>9.7%</strong><p>Thriller share</p></div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script>
+      const movielensToggle = document.querySelector('.sidebar-toggle');
+      if (movielensToggle) {
+        movielensToggle.addEventListener('click', () => {
+          document.querySelector('.sidebar').classList.toggle('open');
+        });
+      }
+    </script>
+  </body>
+</html>

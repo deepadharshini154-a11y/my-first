@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard - Movie Rating App</title>
+    <style>
+      body {margin: 0; font-family: Inter, Arial, sans-serif; background: #0b1220; color: #e2e8f0;}
+      .layout {display: flex; min-height: 100vh;}
+      .sidebar {width: 240px; background: #0d1326; padding: 2rem 1.25rem; box-sizing: border-box; position: sticky; top: 0; height: 100vh;}
+      .sidebar h2 {margin: 0 0 1.5rem; font-size: 1.25rem; letter-spacing: 0.04em;}
+      .sidebar nav a {display: block; color: #94a3b8; text-decoration: none; margin: 0.75rem 0; padding: 0.7rem 1rem; border-radius: 12px;}
+      .sidebar nav a.active, .sidebar nav a:hover {background: #111b33; color: #f8fafc;}
+      .sidebar .bottom {margin-top: 2rem; font-size: 0.9rem; color: #64748b;}
+      .sidebar-toggle {display: none; width: 100%; margin-bottom: 1rem; padding: 0.85rem 1rem; border: none; background: #111b33; color: #f8fafc; border-radius: 12px; font-size: 1rem; text-align: left; cursor: pointer;}
+      .sidebar nav {transition: max-height 0.25s ease-in-out;}
+      .sidebar.open nav {max-height: 1000px;}
+      .sidebar nav.closed {max-height: 0; overflow: hidden;}
+      .content {flex: 1; padding: 2rem;}
+      .topbar {display:flex; justify-content:space-between; align-items:center; margin-bottom:1.75rem;}
+      .topbar .title {font-size:1.75rem; font-weight:700;}
+      .topbar .meta {color:#94a3b8;}
+      .stat-grid {display:grid; gap:1rem; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); margin-bottom:1.5rem;}
+      .stat-card {background:#111b33; border:1px solid rgba(148, 163, 184, 0.12); border-radius:18px; padding:1.3rem;}
+      .stat-card strong {display:block; font-size:2rem; margin-bottom:0.5rem; color:#fff;}
+      .stat-card small {color:#94a3b8;}
+      .panel {background:#111b33; border-radius:24px; padding:1.5rem; margin-bottom:1.5rem;}
+      .panel-header {display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;}
+      .panel-header h3 {margin:0; font-size:1.05rem;}
+      .panel-header span {font-size:0.9rem; color:#94a3b8;}
+      .chart-bar {display:flex; align-items:flex-end; gap:0.55rem; height:180px;}
+      .chart-bar div {flex:1; display:flex; flex-direction:column; justify-content:flex-end; border-radius:12px 12px 0 0; background:#1e293b; position:relative;}
+      .chart-bar div span {position:absolute; top:-1.75rem; left:50%; transform:translateX(-50%); font-size:0.75rem; color:#cbd5e1;}
+      .chart-labels {display:flex; justify-content:space-between; margin-top:0.9rem; color:#94a3b8; font-size:0.8rem;}
+      .genre-grid {display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:1rem; margin-top:1rem;}
+      .genre-item {display:flex; align-items:center; justify-content:space-between; padding:1rem; border-radius:16px; background:#0d1326;}
+      .genre-item span {font-size:0.85rem; color:#94a3b8;}
+      .genre-item strong {font-size:1rem;}
+      .small-grid {display:grid; gap:1rem; grid-template-columns:repeat(auto-fit, minmax(220px,1fr));}
+      .movie-list, .user-analytics {display:grid; gap:1rem;}
+      .movie-card {display:flex; justify-content:space-between; background:#0d1326; border-radius:18px; padding:1rem; align-items:center;}
+      .movie-card strong {color:#fff;}
+      .movie-card span {color:#94a3b8;}
+      .heatmap {display:grid; grid-template-columns:repeat(10, 1fr); gap:6px;}
+      .heat-block {height:24px; border-radius:8px;}
+      .legend {display:flex; gap:0.5rem; margin-top:1rem; font-size:0.85rem; color:#94a3b8;}
+      .legend span {display:flex; align-items:center; gap:0.35rem;}
+      .dot {width:10px; height:10px; border-radius:50%; display:inline-block;}
+      .footer-row {display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:1rem;}
+      .footer-card {background:#111b33; border-radius:20px; padding:1.25rem;}
+      .footer-card strong {display:block; font-size:1.6rem; margin-bottom:0.4rem;}
+      .footer-card p {color:#94a3b8; margin:0;}
+
+      @media (max-width: 1024px) {
+        .layout {flex-direction: column;}
+        .sidebar {width: 100%; position: relative; height: auto; padding: 1.5rem 1rem;}
+        .sidebar-toggle {display: block;}
+        .sidebar nav {max-height: 0; overflow: hidden;}
+        .sidebar.open nav {max-height: 1000px;}
+        .content {padding: 1.25rem;}
+        .topbar {flex-direction: column; align-items: flex-start; gap: 0.75rem;}
+        .topbar .title {font-size: 1.5rem;}
+        .panel-header {flex-direction: column; align-items: flex-start; gap: 0.5rem;}
+        .chart-bar {overflow-x: auto; min-height: 140px;}
+        .chart-labels {flex-wrap: wrap; gap: 0.5rem;}
+        .genre-grid, .small-grid, .footer-row {grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));}
+        .movie-card {flex-direction: column; align-items: flex-start; gap: 0.75rem;}
+        .sidebar nav a {padding: 0.8rem; font-size: 0.95rem;}
+      }
+      @media (max-width: 640px) {
+        .content {padding: 1rem;}
+        .sidebar {padding: 1.25rem;}
+        .topbar .title {font-size: 1.35rem;}
+        .stat-grid {grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));}
+        .panel {padding: 1rem;}
+        .panel-header h3 {font-size: 1rem;}
+        .genre-item, .card, .movie-card, .footer-card {padding: 1rem;}
+        .heatmap {grid-template-columns: repeat(5, 1fr);}
+        .chart-bar {height: 140px;}
+        .table th, .table td {padding: 0.9rem;}
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <button class="sidebar-toggle" aria-label="Toggle navigation">☰ Menu</button>
+        <h2>MovieLens</h2>
+        <nav>
+          <a href="/dashboard" class="active">Overview</a>
+          <a href="/movielens">MovieLens</a>
+          <a href="/ratings">Ratings</a>
+          <a href="/genres">Genres</a>
+          <a href="/directors">Directors</a>
+          <a href="/actors">Actors</a>
+          <a href="/users">Users</a>
+          <a href="/lists">Lists</a>
+          <a href="/recommendations">Recommendations</a>
+          <a href="/logout">Logout</a>
+        </nav>
+        <div class="bottom">Logged in as deepa@gmail.com</div>
+      </aside>
+      <main class="content">
+        <div class="topbar">
+          <div>
+            <div class="title">Movie Rating Analysis</div>
+            <div class="meta">Insights from 100,000+ movies and 20M+ ratings</div>
+          </div>
+          <div class="meta">Jan 1, 2000 - May 20, 2024</div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card">
+            <strong>{{ stats.total_movies }}</strong>
+            <small>Total Movies</small>
+          </div>
+          <div class="stat-card">
+            <strong>{{ stats.avg_rating }} / 10</strong>
+            <small>Average Rating</small>
+          </div>
+          <div class="stat-card">
+            <strong>{{ stats.total_ratings }}</strong>
+            <small>Total Ratings</small>
+          </div>
+          <div class="stat-card">
+            <strong>{{ stats.median_rating }} / 10</strong>
+            <small>Median Rating</small>
+          </div>
+          <div class="stat-card">
+            <strong>{{ stats.avg_rating }}</strong>
+            <small>Top Rated Movie</small>
+            <div style="margin-top:0.7rem; color:#cbd5e1; font-size:0.95rem;">{{ stats.top_rated_movie }}</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Ratings Distribution</h3>
+            <span>All Time</span>
+          </div>
+          <div class="chart-bar">
+            <div style="height:10%; background:#172554;"><span>1-2</span></div>
+            <div style="height:18%; background:#1e40af;"><span>2-3</span></div>
+            <div style="height:30%; background:#2563eb;"><span>3-4</span></div>
+            <div style="height:54%; background:#3b82f6;"><span>4-5</span></div>
+            <div style="height:64%; background:#60a5fa;"><span>5-6</span></div>
+            <div style="height:73%; background:#93c5fd;"><span>6-7</span></div>
+            <div style="height:80%; background:#bfdbfe;"><span>7-8</span></div>
+            <div style="height:70%; background:#f8fafc; color:#0f172a;"><span>8-9</span></div>
+            <div style="height:45%; background:#cbd5e1;"><span>9-10</span></div>
+          </div>
+          <div class="chart-labels">
+            <span>1-2</span><span>2-3</span><span>3-4</span><span>4-5</span><span>5-6</span><span>6-7</span><span>7-8</span><span>8-9</span><span>9-10</span>
+          </div>
+        </div>
+
+        <div class="small-grid">
+          <div class="panel">
+            <div class="panel-header"><h3>Top Rated Movies</h3><a style="color:#60a5fa; text-decoration:none;" href="/ratings">View All</a></div>
+            <div class="movie-list">
+              {% for movie in top_movies %}
+              <div class="movie-card"><div><strong>{{ movie.name }}</strong><span>{{ movie.count }} ratings</span></div><strong>{{ movie.rating }}</strong></div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header"><h3>Ratings by Genre</h3><a style="color:#60a5fa; text-decoration:none;" href="#">View All</a></div>
+            <div class="genre-grid">
+              <div class="genre-item"><strong>Drama</strong><span>38.7%</span></div>
+              <div class="genre-item"><strong>Comedy</strong><span>22.1%</span></div>
+              <div class="genre-item"><strong>Action</strong><span>16.8%</span></div>
+              <div class="genre-item"><strong>Thriller</strong><span>9.7%</span></div>
+              <div class="genre-item"><strong>Sci-Fi</strong><span>6.2%</span></div>
+              <div class="genre-item"><strong>Others</strong><span>6.5%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><h3>Ratings Heatmap</h3><span>Release Year</span></div>
+          <div class="heatmap">
+            <div class="heat-block" style="background:#1e293b"></div>
+            <div class="heat-block" style="background:#253069"></div>
+            <div class="heat-block" style="background:#2e4697"></div>
+            <div class="heat-block" style="background:#4266c4"></div>
+            <div class="heat-block" style="background:#5b86e0"></div>
+            <div class="heat-block" style="background:#7ba5ff"></div>
+            <div class="heat-block" style="background:#a8c9ff"></div>
+            <div class="heat-block" style="background:#dbe7ff"></div>
+            <div class="heat-block" style="background:#e2e8f0"></div>
+            <div class="heat-block" style="background:#f8fafc"></div>
+
+            <div class="heat-block" style="background:#17273e"></div>
+            <div class="heat-block" style="background:#1e3864"></div>
+            <div class="heat-block" style="background:#2a4f8f"></div>
+            <div class="heat-block" style="background:#3b66b8"></div>
+            <div class="heat-block" style="background:#597ed8"></div>
+            <div class="heat-block" style="background:#7da2f0"></div>
+            <div class="heat-block" style="background:#a8c7ff"></div>
+            <div class="heat-block" style="background:#dbe7ff"></div>
+            <div class="heat-block" style="background:#e9eef6"></div>
+            <div class="heat-block" style="background:#f8fafc"></div>
+          </div>
+          <div class="legend">
+            <span><span class="dot" style="background:#1e293b"></span>Low</span>
+            <span><span class="dot" style="background:#4266c4"></span>Medium</span>
+            <span><span class="dot" style="background:#f8fafc"></span>High</span>
+          </div>
+        </div>
+
+        <div class="footer-row">
+          <div class="footer-card">
+            <strong>Christopher Nolan</strong>
+            <p>Top director by average rating. 20 movies analyzed.</p>
+          </div>
+          <div class="footer-card">
+            <strong>Most Ratings by a User</strong>
+            <p>3,245</p>
+          </div>
+          <div class="footer-card">
+            <strong>New Ratings (This Month)</strong>
+            <p>245,892</p>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script>
+      const dashboardToggle = document.querySelector('.sidebar-toggle');
+      if (dashboardToggle) {
+        dashboardToggle.addEventListener('click', () => {
+          document.querySelector('.sidebar').classList.toggle('open');
+        });
+      }
+    </script>
+  </body>
+</html>
