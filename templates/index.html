@@ -3,72 +3,106 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Movie Ratings</title>
+    <title>Movie Rating App</title>
     <style>
-      body {font-family: Arial, sans-serif; margin: 2rem; background: #f5f7fb; color: #1f2937;}
-      header {display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.5rem;}
-      nav a {margin-left: 1rem; color: #1d4ed8; text-decoration:none;}
+      body {font-family: Arial, sans-serif; margin: 0; background: #0f172a; color: #e2e8f0;}
+      .container {max-width: 960px; margin: 0 auto; padding: 2rem;}
+      header {display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;}
+      nav a {color:#fff; margin-left:1rem; text-decoration:none;}
       nav a:hover {text-decoration:underline;}
-      form {margin-bottom: 1.5rem;}
-      input, button {padding: 0.75rem; margin-right: 0.5rem; border: 1px solid #d1d5db; border-radius: 6px;}
-      button {background: #2563eb; color: white; border:none; cursor:pointer;}
-      button:hover {background:#1d4ed8;}
-      table {border-collapse: collapse; width: 100%; max-width: 700px; background: white;}
-      th, td {border: 1px solid #d1d5db; padding: 0.75rem; text-align: left;}
-      .card {background: white; padding: 1rem; border-radius: 10px; box-shadow: 0 1px 3px rgba(15,23,42,0.08);}
+      .hero {padding: 3rem 0;}
+      .hero h1 {font-size: 3rem; margin-bottom: 0.5rem;}
+      .hero p {font-size: 1.1rem; line-height:1.75; max-width: 650px;}
+      section {background:#1e293b; border-radius:16px; padding:2rem; margin-top:1.5rem; box-shadow:0 20px 50px rgba(15,23,42,0.3);}
+      h2 {color:#fff; margin-bottom:0.75rem;}
+      .grid {display:grid; gap:1rem; grid-template-columns:repeat(auto-fit, minmax(220px,1fr));}
+      .card {background:#111827; padding:1.5rem; border-radius:12px;}
+      .card p {color:#cbd5e1; line-height:1.8;}
+      .button {display:inline-block; background:#2563eb; color:#fff; padding:0.9rem 1.5rem; border-radius:999px; text-decoration:none; margin-top:1rem;}
+      .button:hover {background:#1d4ed8;}
+      footer {margin-top:2rem; text-align:center; color:#94a3b8;}
+      dl dt {font-weight:700; margin-top:1rem;}
+      dl dd {margin:0 0 1rem 0; color:#cbd5e1;}
 
       @media (max-width: 860px) {
-        body {margin: 1rem;}
+        .container {padding: 1.25rem;}
         header {flex-direction: column; align-items: flex-start; gap: 1rem;}
         nav {display: flex; flex-wrap: wrap; gap: 0.75rem;}
-        input, button {width: 100%; max-width: none; margin-right: 0;}
-        form {margin-bottom: 1.5rem;}
+        .hero h1 {font-size: 2.3rem;}
+        .grid {grid-template-columns: 1fr;}
       }
       @media (max-width: 640px) {
-        body {margin: 0.75rem;}
-        .card {padding: 1rem;}
-        th, td {padding: 0.65rem;}
-        table {font-size: 0.95rem;}
+        .container {padding: 1rem;}
+        .hero {padding: 2rem 0;}
+        .hero h1 {font-size: 2rem;}
+        .section {padding: 1.5rem;}
       }
     </style>
   </head>
   <body>
-    <header>
-      <div>
-        <h1>Movie Ratings</h1>
-        <p>Track your favorite films and their scores.</p>
-      </div>
-      <nav>
-        <a href="/">Home</a>
-        <a href="/login">Login</a>
-      </nav>
-    </header>
+    <div class="container">
+      <header>
+        <div>
+          <strong>Movie Rating App</strong>
+        </div>
+        <nav>
+          <a href="#home">Home</a>
+          <a href="#about">About</a>
+          <a href="#tech">Technology</a>
+          <a href="#contact">Contact</a>
+          {% if user %}
+          <a href="/dashboard">Dashboard</a>
+          <a href="/logout">Logout</a>
+          {% else %}
+          <a href="/login">Login</a>
+          {% endif %}
+        </nav>
+      </header>
 
-    <section class="card">
-      <h2>Add a rating</h2>
-      <form method="post">
-        <input name="movie" placeholder="Movie title" required />
-        <input name="score" placeholder="Rating" required />
-        <button type="submit">Add Rating</button>
-      </form>
-    </section>
+      <section class="hero" id="home">
+        <h1>Build and share movie ratings with ease</h1>
+        <p>Welcome to a simple movie rating application. Use the app to record movie titles, assign ratings, and browse saved ratings while learning how the app works behind the scenes.</p>
+        <a href="/ratings" class="button">View Ratings</a>
+      </section>
 
-    <section class="card" style="margin-top: 1.5rem;">
-      <h2>Saved ratings</h2>
-      {% if ratings %}
-      <table>
-        <thead>
-          <tr><th>Movie</th><th>Rating</th></tr>
-        </thead>
-        <tbody>
-          {% for item in ratings %}
-          <tr><td>{{ item.movie }}</td><td>{{ item.score }}</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      {% else %}
-      <p>No ratings yet. Add your first movie above.</p>
-      {% endif %}
-    </section>
+      <section id="about">
+        <h2>About the app</h2>
+        <p>This application is a lightweight movie rating tool built with Flask. It provides a clean landing page, a separate login form, and a ratings page that lets you add and review movie scores.</p>
+      </section>
+
+      <section id="tech">
+        <h2>Technology used</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>Flask</h3>
+            <p>Flask is the Python web framework used to build routing, form handling, and template rendering.</p>
+          </div>
+          <div class="card">
+            <h3>HTML & CSS</h3>
+            <p>The landing page, login page, and ratings interface are built using standard HTML and lightweight CSS styling.</p>
+          </div>
+          <div class="card">
+            <h3>Python</h3>
+            <p>Python handles server-side logic, form processing, and simple in-memory storage of movie ratings.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact">
+        <h2>Contact</h2>
+        <dl>
+          <dt>Email</dt>
+          <dd>support@example.com</dd>
+          <dt>Phone</dt>
+          <dd>+1 (555) 123-4567</dd>
+          <dt>Address</dt>
+          <dd>123 Flask Ave, App City</dd>
+        </dl>
+      </section>
+
+      <footer>
+        <p>Simple Flask movie rating app · Made for demonstration</p>
+      </footer>
+    </div>
   </body>
 </html>
